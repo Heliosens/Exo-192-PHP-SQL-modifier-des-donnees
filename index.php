@@ -9,11 +9,57 @@
  */
 
 // TODO Votre code ici.
-try {
-    ...
-}
-catch...
+require 'connPDO.php';
 
+try {
+
+    $pdo = new connPDO();
+    $db = $pdo->conn();
+
+    $nom = 'Wick';
+    $prenom = 'John';
+    $rue = 'la rue';
+    $numero = 12;
+    $cp = 59610;
+    $ville = 'Fourmies';
+    $pays = 'France';
+    $mail = 'john-wick@gmail.com';
+
+    $stm = $db->prepare("
+        INSERT INTO user (nom, prenom, rue, numero, code_postal, ville, pays, mail)
+        VALUES (:nom, :prenom, :rue, :numero, :code_postal, :ville, :pays, :mail)
+    ");
+
+    $stm->bindparam(':nom', $nom);
+    $stm->bindparam(':prenom', $prenom);
+    $stm->bindparam(':rue', $rue);
+    $stm->bindparam(':numero', $numero);
+    $stm->bindparam(':code_postal', $cp);
+    $stm->bindparam(':ville', $ville);
+    $stm->bindparam(':pays', $pays);
+    $stm->bindparam(':mail', $mail);
+
+    $stm->execute();
+    echo "Utilisateur ajouté";
+
+    $nom = 'Ryan';
+    $prenom = 'Jack';
+    $id = $db->lastInsertId();
+
+    $stm = $db->prepare("
+        UPDATE user SET nom = :nom, prenom = :prenom WHERE id=:id;
+    ");
+
+    $stm->bindparam(':nom', $nom);
+    $stm->bindparam(':prenom', $prenom);
+    $stm->bindparam(':id', $id);
+
+    $stm->execute();
+
+}
+catch (PDOException $e){
+    echo "Error : " . $e->getMessage();
+}
 
 
 /**
